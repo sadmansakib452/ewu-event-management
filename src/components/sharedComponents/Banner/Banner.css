@@ -1,0 +1,6 @@
+.banner-container {
+    height: 370px;
+    background-image: url('/src/images/banner.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
