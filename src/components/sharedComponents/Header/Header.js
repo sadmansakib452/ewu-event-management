@@ -74,9 +74,26 @@ const Header = () => {
                     Volunteer
                   </NavDropdown.Item>
                 </NavDropdown>
-                <Button as={Link} to="/signUp" className="h-50 fw-semibold fs-5" variant="secondary">
+                {/* <Button as={Link} to="/signUp" className="h-50 fw-semibold fs-5" variant="secondary">
                   SIGNUP
-                </Button>
+                </Button> */}
+                <NavDropdown
+                  className="mb-5 me-5 fw-semibold fs-5"
+                  title="SIGN UP"
+                  id="navbarScrollingDropdown"
+                  
+                >
+                  <NavDropdown.Item as={Link} to="/signUp/admin" className="fs-5">
+                    Admin
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/signUp/staff" className="fs-5">
+                    Staff Member
+                  </NavDropdown.Item>
+
+                  <NavDropdown.Item as={Link} to="/signUp/volunteer" className="fs-5">
+                    Volunteer
+                  </NavDropdown.Item>
+                </NavDropdown>
               </div>
 
               <div>
