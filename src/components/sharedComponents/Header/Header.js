@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -17,25 +17,25 @@ import "./Header.css";
 
 const Header = () => {
   return (
-    <div>
-      <Navbar expand="lg">
+    <div >
+      <Navbar expand="lg"className="">
         <Container fluid>
           
 
           <Navbar.Brand as={Link} to="/" className="h-50 fw-semibold fs-5">
             <div className="d-flex align-items-center">
-            <Image src={logo} className="img-fluid "></Image>
+            <Image src={logo} fluid></Image>
             <div>East West University Event <br /> Management</div>
             </div>
           </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="navbarTogglerDemo01" />
-          {/* navbarTogglerDemo01 */}
-          <Navbar.Collapse id="navbarTogglerDemo01">
+          <Navbar.Toggle aria-controls="" />
+          {/*  */}
+          <Navbar.Collapse id="">
             <Nav
               className=" my-2 my-lg-0 ms-auto align-self-end"
-              style={{ maxHeight: "250px" }}
-              navbarTogglerDemo01
+              style={{ maxHeight: "280px" }}
+              
             >
               <Nav.Link as={Link} to="/home" className="me-3 fs-5 fw-semibold">Home</Nav.Link>
 
@@ -63,14 +63,14 @@ const Header = () => {
                   title="LOGIN"
                   id="navbarScrollingDropdown"
                 >
-                  <NavDropdown.Item as={Link} to="/signIn" className="fs-5">
+                  <NavDropdown.Item as={Link} to="/signIn/admin" className="fs-5">
                     Admin
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/signIn" className="fs-5">
+                  <NavDropdown.Item as={Link} to="/signIn/staff" className="fs-5">
                     Staff Member
                   </NavDropdown.Item>
 
-                  <NavDropdown.Item as={Link} to="/signIn" className="fs-5">
+                  <NavDropdown.Item as={Link} to="/signIn/volunteer" className="fs-5">
                     Volunteer
                   </NavDropdown.Item>
                 </NavDropdown>

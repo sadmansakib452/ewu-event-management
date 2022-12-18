@@ -6,9 +6,9 @@ import Button from 'react-bootstrap/Button';
 
 const Footer = () => {
     return (
-        <div>
+        <div className='container-fluid color'>
             
-            <footer className='mt-5'>
+            <div className='mt-5'>
 
                 <div className='row justify-content-center'>
 
@@ -75,7 +75,7 @@ const Footer = () => {
             
 
 
-            </footer>
+            </div>
 
 
         </div>

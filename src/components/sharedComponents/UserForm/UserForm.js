@@ -4,10 +4,16 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
 const UserForm = (props) => {
-  const user = props.user;
+  const type = props.path[1];
+  const user = props.path[2];
+  console.log(type);
+
   return (
     <div className="main-body d-flex flex-column align-items-center mt-5">
-      <div className="form-container">
+      {
+
+        type ==='signUp' ? 
+        <div className="form-container">
         <h2 className="text-center">
           Register <br />
           As
@@ -70,7 +76,35 @@ const UserForm = (props) => {
             </Button>
           </div>
         </Form>
-      </div>
+      </div> :
+
+        <div className="form-container">
+        <h2 className="text-center">
+          Sign In  <br />
+          As
+          <br />
+          {user}
+        </h2>
+        <Form>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Email Address</Form.Label>
+            <Form.Control type="email" placeholder="Enter email" />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" placeholder="Enter password" />
+          </Form.Group>
+          <div className="d-flex justify-content-center mt-5">
+            <Button className="w-100 fs-5" variant="secondary" type="submit">
+              Submit
+            </Button>
+          </div>
+      </Form>
+        </div>
+      
+      
+      }
     </div>
   );
 };
