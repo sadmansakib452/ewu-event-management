@@ -54,6 +54,9 @@ const Header = () => {
               <Nav.Link as={Link} to="/contactUs" className="me-3 fs-5 fw-semibold">
                 Contact Us
               </Nav.Link>
+              <Nav.Link as={Link} to="/test" className="me-3 fs-5 fw-semibold">
+                Test
+              </Nav.Link>
             </Nav>
 
             <div className="d-flex flex-column">

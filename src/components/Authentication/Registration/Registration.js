@@ -2,7 +2,7 @@ import React from "react";
 import "./Registration.css";
 import Header from "../../sharedComponents/Header/Header";
 import UserFormBanner from "../../sharedComponents/UserFormBanner/UserFormBanner";
-import UserForm from "../../sharedComponents/UserForm/UserForm";
+import SignUpForm from "../../sharedComponents/UserForm/SignUpform/SignUpForm";
 import Footer from "../../sharedComponents/Footer/Footer";
 import { useLocation } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const Registration = (props) => {
     <div>
       <Header></Header>
       <UserFormBanner></UserFormBanner>
-      <UserForm path = {path}></UserForm>
+      <SignUpForm path = {path}></SignUpForm>
       <Footer></Footer>
     </div>
   );
