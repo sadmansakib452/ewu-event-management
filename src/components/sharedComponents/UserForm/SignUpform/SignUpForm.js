@@ -42,6 +42,7 @@ const SignUpForm = (props) => {
  
   const {
     register,
+    getValues,
     handleSubmit,
     watch,
     formState: { errors },
@@ -132,23 +133,34 @@ const SignUpForm = (props) => {
             <Form.Control
               type="password"
               placeholder="Enter password"
-              {...register("password", { required: true })}
+              {...register("password", { required: "Password is required!" })}
             />
             {errors.password && (
-              <span style={{ color: "red" }}>Password is required</span>
-            )}
+          <p style={{ color: "red" }}>{errors.password.message}</p>
+        )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
-              type="confirmPassword"
+              type="password"
               placeholder="Enter password"
-              {...register("confirmPassword", { required: true })}
+              {...register("passwordConfirmation", {
+                required: "Please confirm password!",
+                validate: {
+                  matchesPreviousPassword: (value) => {
+                    const { password } = getValues();
+                    return password === value || "Passwords should match!";
+                  }
+                }
+              })}
             />
-            {errors.confirmPassword && (
-              <span style={{ color: "red" }}>Password is required</span>
-            )}
+
+            {errors.passwordConfirmation && (
+          <p style={{ color: "red" }}>
+            {errors.passwordConfirmation.message}
+          </p>
+        )}
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
