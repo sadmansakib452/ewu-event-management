@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import { FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import swal from "sweetalert";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 //Google Authentication import
 import { initializeApp } from "firebase/app";
@@ -22,7 +24,7 @@ import { UserContext } from "../../../../App";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
+const auth = getAuth(app);
 //-----------Main Function--------------------------------
 const SignInForm = (props) => {
   // -------------User State information--------------------
@@ -39,6 +41,15 @@ const SignInForm = (props) => {
     photo: "",
   });
   // -------------User State information end----------------
+
+  // ------------------Toggle Button--------------------------------
+  const [alignment, setAlignment] = useState("web");
+
+  const handleChange = (event, newAlignment) => {
+    setAlignment(newAlignment);
+    console.log(newAlignment)
+  };
+  // ------------------Toggle Button end----------------------------
 
   // ----------Google Sign in----------
   const auth = getAuth(app);
@@ -110,28 +121,32 @@ const SignInForm = (props) => {
 
   // --------------------Sign Out------------------------------------
 
-  const handleSignOut = () => {
-    signOut(auth)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+ 
 
   // --------------------Sign Out end------------------------------------
 
   return (
-    <div className="main-body d-flex flex-column align-items-center mt-5">
-      <div className="form-container">
+    <div className="main-body d-flex flex-column align-items-center mt-5 ">
+      <div className="form-container shadow p-4 mb-5 bg-body rounded">
         <h2 className="text-center">
           Sign In <br />
           As
           <br />
           {userType}
         </h2>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <ToggleButtonGroup
+            color="primary"
+            value={alignment}
+            exclusive
+            onChange={handleChange}
+            aria-label="Platform"
+          >
+            <ToggleButton value="web">Web</ToggleButton>
+            <ToggleButton value="android">Android</ToggleButton>
+            <ToggleButton value="ios">iOS</ToggleButton>
+          </ToggleButtonGroup>
+        <Form onSubmit={handleSubmit(onSubmit)} className="">
+          
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Email Address</Form.Label>
             <Form.Control
@@ -181,5 +196,14 @@ const SignInForm = (props) => {
     </div>
   );
 };
-
+export const handleSignOut = () => {
+  signOut(auth)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 export default SignInForm;
+

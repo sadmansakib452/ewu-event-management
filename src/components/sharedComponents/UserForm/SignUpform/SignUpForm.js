@@ -85,7 +85,7 @@ const SignUpForm = (props) => {
     <div className="main-body d-flex flex-column align-items-center mt-5">
       {/* // ----------------------Sign Up form-------------------- */}
 
-      <div className="form-container">
+      <div className="form-container shadow p-4 mb-5 bg-body rounded">
         <h2 className="text-center">
           Register <br />
           As

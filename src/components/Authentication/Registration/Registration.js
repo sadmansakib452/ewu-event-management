@@ -12,10 +12,10 @@ const Registration = (props) => {
   const path = location.pathname.split('/');
   return (
     <div>
-      <Header></Header>
-      <UserFormBanner></UserFormBanner>
+      
+     
       <SignUpForm path = {path}></SignUpForm>
-      <Footer></Footer>
+      
     </div>
   );
 };

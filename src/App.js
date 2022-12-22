@@ -9,6 +9,10 @@ import AddEvent from "./components/AddEvent/AddEvent";
 import { createContext,useState } from "react";
 import Suppliers from "./components/Suppliers/Suppliers";
 
+import SignInTest from './components/sharedComponents/UserForm/SignInForm/SignInTest'
+import Budget from "./components/Budget/Budget";
+import PrivateOutlet from './components/Authentication/PrivateOutlet/PrivateOutlet'
+import SignUp from "./components/sharedComponents/UserForm/SignUpform/SignUp";
 export const UserContext = createContext();
 
 function App() {
@@ -20,10 +24,18 @@ function App() {
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Home />} />
-          <Route path="/signUp/:user" element={<Registration />} />
-          <Route path="/signIn/:user" element={<SignIn />} />
-          <Route path="/venue" element={<AddEvent />} />
-          <Route path="/suppliers" element={<Suppliers />} />
+          <Route path="/signUp/" element={<SignUp />} />
+          <Route path="/signIn/" element={<SignInTest />} />
+          {/* <Route path="/venue" element={<AddEvent />} /> */}
+                                
+          <Route path="/suppliers" element={<SignInTest />} />
+          <Route path="*" element={<PrivateOutlet/>}>
+
+            <Route path="budget" element={ <Budget/>}/>
+
+
+          </Route>
+
 
         </Routes>
       </BrowserRouter>

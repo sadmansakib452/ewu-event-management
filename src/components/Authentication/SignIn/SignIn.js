@@ -13,10 +13,10 @@ const SignIn = () => {
     
     return (
         <div>
-            <Header></Header>
-            <UserFormBanner path=""></UserFormBanner>
+         
+          
             <SignInForm path={path}></SignInForm>
-            <Footer></Footer>
+          
             
         </div>
     );
