@@ -1,5 +1,5 @@
 import { React, useContext } from "react";
-import { Link, redirect } from "react-router-dom";
+import { Link} from "react-router-dom";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -21,6 +21,8 @@ import { getAuth, signOut } from "firebase/auth";
 const app = initializeApp(firebaseConfig);
 const Header = () => {
   const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+
+  console.log(loggedInUser);
 
   // --------------------Sign Out------------------------------------
   const auth = getAuth(app);
@@ -61,7 +63,7 @@ const Header = () => {
               className=" my-2 my-lg-0 ms-auto align-self-end"
               style={{ maxHeight: "280px" }}
             >
-              <Nav.Link as={Link} to="/home" className="me-3 fs-5 fw-semibold">
+              <Nav.Link as={Link} to="/" className="me-3 fs-5 fw-semibold">
                 Home
               </Nav.Link>
 
@@ -88,6 +90,7 @@ const Header = () => {
               >
                 Budget
               </Nav.Link>
+
               <Nav.Link
                 as={Link}
                 to="/contactUs"
@@ -95,6 +98,8 @@ const Header = () => {
               >
                 Contact Us
               </Nav.Link>
+             
+
               <Nav.Link as={Link} to="/test" className="me-3 fs-5 fw-semibold">
                 Test
               </Nav.Link>
@@ -111,7 +116,8 @@ const Header = () => {
                     <NavDropdown.Item href="#action/3.1">
                       Profile
                     </NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2">
+                    <NavDropdown.Item as={Link}
+                    to="/dashboard">
                       Dashboard
                     </NavDropdown.Item>
                     

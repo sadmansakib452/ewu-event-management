@@ -1,42 +1,56 @@
 import "./App.css";
-import Header from "./components/sharedComponents/Header/Header";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Registration from "./components/Authentication/Registration/Registration";
-import SignIn from './components/Authentication/SignIn/SignIn'
+import SignIn from "./components/Authentication/SignIn/SignIn";
 import Home from "./components/Home/Home";
-import AddEvent from "./components/AddEvent/AddEvent";
-import { createContext,useState } from "react";
+import { createContext, useState } from "react";
+import Budget from "./components/Budget/Budget";
+import PrivateOutlet from "./components/Authentication/PrivateOutlet/PrivateOutlet";
+import SignUp from "./components/Authentication/SignUp/SignUp";
+// import Dashboard from "./components/Dashboard/Dashboard";
+import Dashboard from "./components/DashboardTest/Dashboard"
+import About from "./components/About/About";
+import SharedLayout from "./components/sharedComponents/SharedLayout/SharedLayout";
+
 import Suppliers from "./components/Suppliers/Suppliers";
 
-import SignInTest from './components/sharedComponents/UserForm/SignInForm/SignInTest'
-import Budget from "./components/Budget/Budget";
-import PrivateOutlet from './components/Authentication/PrivateOutlet/PrivateOutlet'
-import SignUp from "./components/sharedComponents/UserForm/SignUpform/SignUp";
-export const UserContext = createContext();
 
+
+export const UserContext = createContext();
 function App() {
   const [loggedInUser, setLoggedInUser] = useState({});
   return (
-    <UserContext.Provider value = {[loggedInUser,setLoggedInUser]}>
+    <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
       <BrowserRouter>
-    
         <Routes>
-          <Route path="/home" element={<Home />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/signUp/" element={<SignUp />} />
-          <Route path="/signIn/" element={<SignInTest />} />
-          {/* <Route path="/venue" element={<AddEvent />} /> */}
-                                
-          <Route path="/suppliers" element={<SignInTest />} />
-          <Route path="*" element={<PrivateOutlet/>}>
 
-            <Route path="budget" element={ <Budget/>}/>
+          <Route path="/" element={<SharedLayout />}>
+            <Route index element={<Home />} />
+           
 
-
+            <Route path="*" element={<PrivateOutlet />}>
+              <Route path="budget" element={<Budget />} />
+            </Route>
+            <Route path="/about" element={<About />} />
+            <Route path="/suppliers" element={<Suppliers />} />
           </Route>
 
 
+
+          <Route path="/dashboard" element={<Dashboard/>}>
+            
+           
+       
+            {/* <Route path="/dashboard" element={<Dashboard />}>
+              <Route path="/dashboard/orders" element={<Orders />} />
+              <Route path="/dashboard/deposits" element={<Deposits />} />
+            </Route> */}
+          
+
+          </Route>
+
+          <Route path="/signUp/" element={<SignUp />} />
+          <Route path="/signIn/" element={<SignIn />} />
+          
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

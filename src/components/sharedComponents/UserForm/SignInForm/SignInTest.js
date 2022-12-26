@@ -30,6 +30,7 @@ import firebaseConfig from "../../../Authentication/Firebase/firebaseConfig";
 import { UserContext } from "../../../../App";
 
 
+
 // --------------------------------
 
 // Initialize Firebase
@@ -121,6 +122,7 @@ export default function SignInTest() {
       .catch((error) => {
         const errorMessage = error.message;
         //Fail Alert
+        
         swal({
           title: "Ops!",
           text: errorMessage,
@@ -163,12 +165,8 @@ export default function SignInTest() {
 
         const errorMessage = error.message;
         //Fail Alert
-        swal({
-          title: "Ops!",
-          text: errorMessage,
-          icon: "error",
-          button: "OK",
-        });
+   
+       
        });
    };
    // ----------Google Sign in end--------------------------------------

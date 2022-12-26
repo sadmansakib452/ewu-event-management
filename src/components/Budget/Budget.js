@@ -4,7 +4,7 @@ import Header from '../sharedComponents/Header/Header';
 const Budget = () => {
     return (
         <div>
-            <Header></Header>
+            {/* <Header></Header> */}
             <h1>This is budget page</h1>
         </div>
     );
