@@ -5,7 +5,7 @@ import { UserContext } from '../../../App';
 const PrivateOutlet = () => {
 
     const params = useParams();
-    
+    // console.log(params)
     const [loggedInUser] = useContext(UserContext);
     
     return loggedInUser.isSignedIn ? <Outlet /> : <Navigate to="/signIn" state={'/'+params['*']}/>

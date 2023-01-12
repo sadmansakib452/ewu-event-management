@@ -1,4 +1,4 @@
-import { React, useContext } from "react";
+import { React, useContext, useEffect} from "react";
 import { Link} from "react-router-dom";
 
 import Button from "react-bootstrap/Button";
@@ -10,41 +10,65 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import Image from "react-bootstrap/Image";
 import { UserContext } from "../../../App";
 import { FaSearch } from "react-icons/fa";
-import firebaseConfig from "../../Authentication/Firebase/firebaseConfig";
+
 import logo from "../../../images/logo.svg";
+
 import "./Header.css";
 //Google Authentication import
-import { initializeApp } from "firebase/app";
-import { getAuth, signOut } from "firebase/auth";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+import {handleSignOut} from "../../Authentication/Firebase/GoogleAtuh/GoogleAuth";
+import {loadEvents, loadUsers, loadSuppliers} from '../../Dashboard/UploadImage'
+
 const Header = () => {
-  const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+  const [loggedInUser,
+    setLoggedInUser,
+    getAllUserData,
+    setGetAllUserData,
+    getAllEventData,
+    setGetAllEventData,
+    getAllSupplierData, 
+    setGetAllSupplierData] = useContext(UserContext);
 
   console.log(loggedInUser);
 
-  // --------------------Sign Out------------------------------------
-  const auth = getAuth(app);
-  const handleSignOut = () => {
-    signOut(auth)
-      .then((res) => {
-        const signedOutUser = {
-          isSignedIn: false,
-          name: "",
-          email: "",
-          photo: "",
-        };
-        setLoggedInUser(signedOutUser);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  //--------------------Load Database------------------------------
+  const LoadDatabase = () =>{
 
+    useEffect(()=>{
+
+      loadEvents().then((events)=>{
+        console.log(events);
+        setGetAllEventData(events)
+      })
+      loadUsers().then((users)=>{
+        setGetAllUserData(users);
+        console.log('users from dashboard',users);
+      })
+      loadSuppliers().then((suppliers)=>{
+        console.log('from dashboard supplier', suppliers)
+        setGetAllSupplierData(suppliers)
+        console.log('users from dashboard',suppliers);
+      });
+     
+    },[])
+
+  }
+
+  loggedInUser.isSignedIn && LoadDatabase();
+  //--------------------Load Database End--------------------------
+
+
+  // --------------------Sign Out------------------------------------
+
+  const SignOut = () =>{
+    handleSignOut()
+    .then();
+  }
+  
   // --------------------Sign Out end------------------------------------
   return (
     <div>
+     
       <Navbar expand="lg" className="">
         <Container fluid>
           <Navbar.Brand as={Link} to="/" className="h-50 fw-semibold fs-5">
@@ -109,7 +133,7 @@ const Header = () => {
               <div className="ms-auto d-flex">
                 {loggedInUser.isSignedIn &&  (
                   <NavDropdown
-                    title={loggedInUser.name || loggedInUser.email}
+                    title={loggedInUser.name || loggedInUser.firstName + ' ' + loggedInUser.lastName}
                     id="basic-nav-dropdown"
                     className="mb-5 me-2 fw-semibold fs-5"
                   >
@@ -122,7 +146,7 @@ const Header = () => {
                     </NavDropdown.Item>
                     
                     <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={handleSignOut}>
+                    <NavDropdown.Item onClick={SignOut}>
                       Sign Out
                     </NavDropdown.Item>
                   </NavDropdown>

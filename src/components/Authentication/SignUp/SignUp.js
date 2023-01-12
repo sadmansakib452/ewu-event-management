@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
 
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
@@ -14,15 +15,17 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../images/logo.svg";
+import { ToastContainer, toast } from "react-toastify";
+
 import { useForm } from "react-hook-form";
-import swal from "sweetalert";
-import { initializeApp } from "firebase/app";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import firebaseConfig from "../../../components/Authentication/Firebase/firebaseConfig";
+import {
+  handleSaveUser,
+  handleCreateUser,
+} from "../../Authentication/Firebase/GoogleAtuh/GoogleAuth";
+
 import { UserContext } from "../../../App";
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+import { showPopAlert } from "../../../components/sharedComponents/Alert/Alert";
 
 function Copyright(props) {
   return (
@@ -44,33 +47,53 @@ function Copyright(props) {
 
 const theme = createTheme();
 
+const userRoll = [
+  {
+    value: "admin",
+    label: "Admin",
+  },
+  {
+    value: "volunteer",
+    label: "Volunteer",
+  },
+  {
+    value: "staff",
+    label: "Staff",
+  },
+];
+const userGender = [
+  {
+    value: "male",
+    label: "Male",
+  },
+  {
+    value: "female",
+    label: "Female",
+  },
+];
 //------------------Main Function----------------------
 
 export default function SignUp() {
+  // -------------User State information--------------------
 
- // -------------User State information--------------------
+  const [loggedInUser, setLoggedInUser] = useContext(UserContext);
 
- const [loggedInUser,setLoggedInUser] = useContext(UserContext);
+  // -------------User State information end----------------
 
- // -------------User State information end----------------
+  // --------------------Navigation start-----------------
+  const navigate = useNavigate();
+  const location = useLocation();
 
- // --------------------Navigation start-----------------
- const navigate = useNavigate()
- const location = useLocation()
- 
- const from = location.state || '/'
-// --------------------Navigation end-----------------
-
+  const from = location.state || "/";
+  // --------------------Navigation end-----------------
 
   // ------------------Form Submit -----------------------------
-
-  const auth = getAuth(app);
 
   const {
     register,
     getValues,
     handleSubmit,
-
+    reset,
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
@@ -86,66 +109,48 @@ export default function SignUp() {
       userRoll,
     } = data;
 
-    const userData = {email, firstName, lastName, studentId, phoneNumber, skill, userGender, userRoll}
-   
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        
-        
-         //-----------saving to our own database start----------
-         fetch("http://localhost:5000/addUser", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        })
-        .then((res) => { console.log(res.message) })
-        .catch((err) => {console.log(err.message)});
-        //-----------saving to our own database end----------
-        
-        const loggedInUser = {
-          isSignedIn: true,
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL,
-          ...userData
+    const userData = {
+      email,
+      firstName,
+      lastName,
+      studentId,
+      phoneNumber,
+      skill,
+      userGender,
+      userRoll,
+    };
+
+    const createUserWithSaveDatabase = async (userData, email, password) => {
+      const createdUser = await handleCreateUser(userData, email, password);
+      
+      userData.firebaseUID = createdUser.firebaseUID;
+
+      if (createdUser !== "auth/email-already-in-use") {
+        const savedUser = await handleSaveUser(userData);
+        if (savedUser.status !== 409) {
+          setLoggedInUser(createdUser);
+          showPopAlert(
+            "Success",
+            "Successfully Created Account",
+            "success",
+            "OK"
+          );
+          navigate(from, { replace: true });
         }
-        setLoggedInUser(loggedInUser)
-       
-        //popup alert message
-        swal({
-          title: "Success!",
-          text: "user created successfully",
-          icon: "success",
-          button: "OK",
-        });
-        navigate(from, { replace: true })
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-
-        //popup alert message
-        swal({
-          title: "Ops!",
-          text: errorMessage,
-          icon: "error",
-          button: "OK",
-        });
-
-        // ..
-      });
-
-
+      } else {
+        showPopAlert("Ops", createdUser, "error", "OK");
+        reset();
+      }
+    };
+    createUserWithSaveDatabase(userData, email, password);
   };
-
 
   // ------------------Form Submit end-----------------------------
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        <ToastContainer position="top-left" />
         <CssBaseline />
         <Box
           sx={{
@@ -273,33 +278,41 @@ export default function SignUp() {
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="outlined-basic"
-                  label="Type your roll"
-                  variant="outlined"
+                  select
                   fullWidth
-                  placeholder="Ex. admin, volunteer, staff"
-                  {...register("userRoll", {
+                  defaultValue=""
+                  label="Select your roll"
+                  inputProps={register("userRoll", {
                     required: true,
                   })}
-                />
+                >
+                  {userRoll.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
 
                 {errors.userRoll && errors.userRoll.type === "required" && (
                   <span style={{ color: "red" }}>User roll is required</span>
                 )}
-
-              
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  id="outlined-basic"
-                  label="Type your gender"
-                  variant="outlined"
+                  select
                   fullWidth
-                  placeholder="Ex. male, female"
-                  {...register("userGender", {
+                  defaultValue=""
+                  label="Select your gender"
+                  inputProps={register("userGender", {
                     required: true,
                   })}
-                />
+                >
+                  {userGender.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 {errors.userGender && errors.userGender.type === "required" && (
                   <span style={{ color: "red" }}>Gender is required</span>
                 )}

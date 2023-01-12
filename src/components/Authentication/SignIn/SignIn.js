@@ -13,25 +13,11 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
-import swal from "sweetalert";
+import { showPopAlert } from "../../../components/sharedComponents/Alert/Alert";
 import logo from '../../../images/logo.svg'
-//Google Authentication import
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import firebaseConfig from "../Firebase/firebaseConfig";
 import { UserContext } from "../../../App";
-
-
-
-// --------------------------------
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+import {handleSignInUser, handleGetUserInfo} from "../../Authentication/Firebase/GoogleAtuh/GoogleAuth"
+import { ToastContainer } from "react-toastify";
 
 function Copyright(props) {
   return (
@@ -76,89 +62,39 @@ export default function SignIn() {
     
     formState: { errors },
   } = useForm();
-  const auth = getAuth(app);
+ 
   const onSubmit = (data) => {
-    const { email, password } = data;
+    const {email, password} = data;
 
+  
+      const signIn = async(email, password) =>{
     
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        //Success Alert
-        
-
-        // Signed in
-        const user = userCredential.user;
-    
-        const loggedInUser = {
-          isSignedIn: true,
-          name: user.displayName,
-          email: user.email,
-          photo: user.photoURL
-        }
-   
+        const user = await handleSignInUser(email, password)
        
-        setLoggedInUser(loggedInUser);
         
+        if(user === 'auth/wrong-password' || user === 'auth/user-not-found'){
+          showPopAlert('Ops',user,'error','OK')
+        }
+        else{
+          const getUserFromDB = await handleGetUserInfo(email)
+          
+          setLoggedInUser(getUserFromDB)
+          showPopAlert('Success','Successfully logged in','success','OK')
+          navigate(from, { replace: true })
+        }
+      }
 
-     
-        navigate(from, { replace: true })
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        //Fail Alert
-        
-        swal({
-          title: "Ops!",
-          text: errorMessage,
-          icon: "error",
-          button: "OK",
-        });
-      });
+      signIn(email, password);
+
+    
   };
 
   //   ----------------------Sign In with Email & Password with react hook end--------------------------
 
-   // ----------Google Sign in----------
-   
-   const provider = new GoogleAuthProvider();
- 
-   const handleSubmitWithGoogle = () => {
-     signInWithPopup(auth, provider)
-       .then((result) => {
-         // This gives you a Google Access Token. You can use it to access the Google API.
-         const credential = GoogleAuthProvider.credentialFromResult(result);
-         const token = credential.accessToken;
- 
-         // The signed-in user info.
-         const { displayName, email, photoURL } = result.user;
-         const loggedInUser = {
-           isSignedIn: true,
-           name: displayName,
-           email: email,
-           photo: photoURL,
-         };
- 
-       
- 
-         setLoggedInUser(loggedInUser);
-         navigate(from, { replace: true })
-       
-       
-       })
-       .catch((error) => {
-
-        const errorMessage = error.message;
-        console.log(errorMessage)
-        //Fail Alert
-   
-       
-       });
-   };
-   // ----------Google Sign in end--------------------------------------
-
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+      <ToastContainer position="top-left" />
         <CssBaseline />
         <Box
           sx={{
@@ -224,14 +160,7 @@ export default function SignIn() {
               Sign In
             </Button>
 
-            <Button
-              onClick={handleSubmitWithGoogle}
-              fullWidth
-              variant="contained"
-              sx={{ mt: 1, mb: 2 }}
-            >
-              Sign With Google
-            </Button>
+            
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

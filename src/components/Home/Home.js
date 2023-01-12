@@ -12,12 +12,12 @@ import { Outlet } from 'react-router-dom';
 const Home = () => {
     return (
         <div>
-           
+            <Header></Header>
             <SearchEvent></SearchEvent>
             <Banner></Banner>
             <CardContainer></CardContainer>
             <Reviews></Reviews>
-            
+            <Footer></Footer>
           
            
         </div>
