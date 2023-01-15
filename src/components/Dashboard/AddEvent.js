@@ -12,12 +12,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { DatePickerMUI } from "./DatePickerMUI";
-// import "react-datepicker/dist/react-datepicker.css";
-
-// import { Controller } from "react-hook-form";
-// import TextField from "@mui/material/TextField";
+import { MultipleSelectCheckmarks } from "./MultiSelection";
 
 import {
   handleImageUpload,
@@ -27,10 +24,9 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import { getSupplierData } from "./FormSelectionData";
 import { UserContext } from "../../App";
-
+import { showPopAlert } from "../sharedComponents/Alert/Alert";
 const theme = createTheme();
 const defaultValues = {
-  
   MUIPicker: new Date(),
 };
 
@@ -38,7 +34,8 @@ const defaultValues = {
 
 export default function AddSupplier() {
   // -------------Supplier State information--------------------
-  const [supplier, setSupplier] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+
   // -------------Supplier State information end----------------
 
   const [
@@ -49,13 +46,11 @@ export default function AddSupplier() {
     getAllEventData,
     setGetAllEventData,
   ] = useContext(UserContext);
-  
 
   useEffect(() => {
-    getSupplierData().then((supplierData) => setSupplier(supplierData));
+    getSupplierData().then((supplierData) => setSuppliers(supplierData));
   }, []);
 
-  console.log(supplier);
   //----------Geting Supplier Data End------------------
   const {
     register,
@@ -67,57 +62,63 @@ export default function AddSupplier() {
   } = useForm(defaultValues);
 
   const onSubmit = async (data) => {
-    const month = (data.MUIPicker.$M) +1
-    const day = data.MUIPicker.$D
-    const year = data.MUIPicker.$y
-    const date = day +"-"+month+"-"+year;
-  
     const file = data.selectedfile[0] || null;
    
-    let eventData = {
-      // id: '',
-      eventName: data.eventName,
-      supplierId: data.supplier,
-      guestName: data.guest,
-      location: data.location,
-      date: date
-    };
-
-  
-
+    
+   
+    if (data.MUIPicker === undefined) {
+        setError("selectedDate", {
+        message: "Dont use default date. Please select any date by clicking on button every times.",
+      });
+     
+    } 
     if (file === null) {
       setError("selectedfile", {
         message: "Please select a image!",
       });
-    } else if (file.type === "image/jpeg" || file.type === "image/png") {
-      const handleSaveImageAndData = async () => {
+    }
+    else if (file.type === "image/jpeg" || file.type === "image/png") {
 
+      const month = data.MUIPicker.$M + 1;
+      const day = data.MUIPicker.$D;
+      const year = data.MUIPicker.$y;
+      const date = day + "-" + month + "-" + year;
+
+      let eventData = {
+        // id: '',
+        eventName: data.eventName,
+        supplierId: data.supplierId,
+        guestName: data.guest,
+        location: data.location,
+        date: date,
+        description: data.description,
+        budget: data.budget
+      };
+
+      console.log('from 93 line of add event',eventData);
+
+      const handleSaveImageAndData = async () => {
         const date = await checkEventDate(eventData.date);
         console.log(date);
         if (date.status === 200) {
           const uploadImage = await handleImageUpload(file);
           if (uploadImage.status === 200) {
             const imageURL = uploadImage.data.data.display_url;
-            const savedEvent = await saveEventToDatabase(
-              imageURL,
-              eventData
-            );
-            
-            if(savedEvent.acknowledged){
-              eventData['id'] = savedEvent.insertedId
-              eventData['imageURL'] = imageURL
+            const savedEvent = await saveEventToDatabase(imageURL, eventData);
 
-              setGetAllEventData([...getAllEventData,eventData]);
+            if (savedEvent.acknowledged) {
+              eventData["id"] = savedEvent.insertedId;
+              eventData["imageURL"] = imageURL;
+
+              setGetAllEventData([...getAllEventData, eventData]);
               toast.success("Event is successfully added");
             }
-            console.log('from add event',eventData)
-            
-          
-            setGetAllEventData([...getAllEventData,eventData]);
+            console.log("from add event", eventData);
+
+            // setGetAllEventData([...getAllEventData, eventData]);
             reset();
           }
         } else {
-          
           toast.error("Event is already added");
         }
       };
@@ -169,12 +170,12 @@ export default function AddSupplier() {
                   <span style={{ color: "red" }}>Title is required</span>
                 )}
               </Grid>
-             
 
               <Grid item xs={12}>
-                <TextField
+                {/* <TextField
                   select
                   fullWidth
+                  
                   defaultValue=""
                   label="Add Supplier"
                   inputProps={register("supplier", {
@@ -191,13 +192,18 @@ export default function AddSupplier() {
                         ")"}
                     </MenuItem>
                   ))}
-                </TextField>
+                </TextField> */}
+                <MultipleSelectCheckmarks
+                  control={control}
+                  Controller={Controller}
+                  suppliers={suppliers}
+                />
               </Grid>
 
               <Grid item xs={12}>
                 <TextField
                   id="outlined-basic"
-                  label="Add Guest"
+                  label="Guest"
                   variant="outlined"
                   fullWidth
                   {...register("guest", {
@@ -218,12 +224,50 @@ export default function AddSupplier() {
                     required: true,
                   })}
                 />
-                {errors.guest && errors.location.type === "required" && (
+                {errors.location && errors.location.type === "required" && (
                   <span style={{ color: "red" }}>Location is required</span>
                 )}
               </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  id="outlined-basic"
+                  label="Budget"
+                  variant="outlined"
+                  fullWidth
+                  {...register("budget", {
+                    required: true,
+                  })}
+                />
+                {errors.budget && errors.budget.type === "required" && (
+                  <span style={{ color: "red" }}>Budget is required</span>
+                )}
+              </Grid>
               <Grid item xs={12} sm={12}>
-                <DatePickerMUI control={control} />
+                <DatePickerMUI control={control} register={register} />
+                {errors.selectedDate && (
+                  <div style={{ color: "red" }}>
+                    {" "}
+                    {errors.selectedDate?.message}
+                  </div>
+                )}
+              </Grid>
+              <Grid item xs={12} sm={12}>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  placeholder="Description"
+                  multiline
+                  rows={6}
+                  {...register("description", {
+                    required: true,
+                  })}
+                />
+                {errors.description &&
+                  errors.description.type === "required" && (
+                    <span style={{ color: "red" }}>
+                      Description is required
+                    </span>
+                  )}
               </Grid>
             </Grid>
 

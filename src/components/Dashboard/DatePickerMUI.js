@@ -4,7 +4,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-export const DatePickerMUI = ({ control }) => {
+export const DatePickerMUI = ({ control, register}) => {
 
  return <LocalizationProvider dateAdapter={AdapterDayjs}>
     <Controller
@@ -17,12 +17,17 @@ export const DatePickerMUI = ({ control }) => {
           inputFormat="DD/MM/YYYY"
           label="Select Event Date"
           // value={value}
-
+        
           onChange={(event) => {
             onChange(event);
             // setValue(event);
           }}
-          renderInput={(params) => <TextField fullWidth {...params} />}
+          renderInput={(params) => <TextField fullWidth {...params} 
+          
+          {...register("selectedDate", {
+            required: true,
+          })}
+          />}
           {...rest}
         />
       )}

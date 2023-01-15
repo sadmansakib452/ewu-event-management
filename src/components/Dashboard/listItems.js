@@ -31,6 +31,15 @@ export const mainListItems = (
     </ListItemButton>
   </Link>
 
+  <Link to="myEvent" style={{textDecoration: 'none', color: 'black'}}>
+    <ListItemButton>
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="My Events" />
+    </ListItemButton>
+  </Link>
+
     <Link to="allUser" style={{textDecoration: 'none', color: 'black'}}>
     <ListItemButton>
       <ListItemIcon>

@@ -123,7 +123,10 @@ export const loadEvents = () => {
             supplierId: event.supplierId,
             guestName: event.guestName,
             location: event.location, 
-            imageURL: event.imageURL     
+            imageURL: event.imageURL,
+            budget: event.budget,
+            description: event.description  
+
             
           };
         });

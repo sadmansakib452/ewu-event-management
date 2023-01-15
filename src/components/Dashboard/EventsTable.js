@@ -20,6 +20,7 @@ export default function EventsTable() {
     setRows(getAllEventData);
   }, []);
 
+  console.log('from line 23 of Events table',getAllEventData)
   const deleteUser = React.useCallback(
     (id) => () => {
       setTimeout(async () => {
@@ -43,6 +44,7 @@ export default function EventsTable() {
 
       { field: "date", headerName: "Date", width: 130 },
       { field: "eventName", headerName: "Event Name", width: 230 },
+      { field: "budget", headerName: "Budget", width: 110 },
       { field: "supplierId", headerName: "Supplier Id", width: 230 },
       { field: "guestName", headerName: "Guest", width: 130 },
       { field: "location", headerName: "Venue", width: 230 },

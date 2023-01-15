@@ -9,7 +9,6 @@ import Spinner from "./components/sharedComponents/Spinner/Spinner";
 const Home = lazy(() => import("./components/Home/Home"));
 const SignIn = lazy(() => import("./components/Authentication/SignIn/SignIn"));
 const SignUp = lazy(() => import("./components/Authentication/SignUp/SignUp"));
-const Budget = lazy(() => import("./components/Budget/Budget.js"));
 const About = lazy(() => import("./components/About/About"));
 const Dashboard = lazy(() => import("./components/Dashboard/Dashboard.js"));
 const Suppliers = lazy(() => import("./components/Suppliers/Suppliers"));
@@ -18,9 +17,11 @@ const SuppliersTable = lazy(() =>
   import("./components/Dashboard/SuppliersTable.js")
 );
 const Profile = lazy(() => import("./components/Dashboard/Profile.js"));
+const MyEvents = lazy(() => import("./components/Dashboard/MyEvent.js"));
 const AddEvent = lazy(() => import("./components/Dashboard/AddEvent.js"));
 const EventsTable = lazy(() => import("./components/Dashboard/EventsTable.js"));
 const AddSupplier = lazy(() => import("./components/Dashboard/AddSupplier.js"));
+const Events = lazy(() => import("./components/Events/Events.js"));
 export const UserContext = createContext();
 function App() {
 
@@ -36,13 +37,17 @@ function App() {
   const [getAllSupplierData, setGetAllSupplierData] = useState(() => {
     return JSON.parse(window.localStorage.getItem("suppliers")) || {};
   });
+  const [getAllUserEvent, setAllUserEvent] = useState(() => {
+    return JSON.parse(window.localStorage.getItem("userEvents")) || {};
+  });
 
   useEffect(() => {
     window.localStorage.setItem("user", JSON.stringify(loggedInUser));
     window.localStorage.setItem("users", JSON.stringify(getAllUserData));
     window.localStorage.setItem("events", JSON.stringify(getAllEventData));
     window.localStorage.setItem("suppliers", JSON.stringify(getAllSupplierData));
-  }, [loggedInUser, getAllUserData, getAllEventData,getAllSupplierData]);
+    window.localStorage.setItem("userEvents", JSON.stringify(getAllUserEvent));
+  }, [loggedInUser, getAllUserData, getAllEventData,getAllSupplierData,getAllUserEvent]);
 
   // useEffect(() => {
   //   window.localStorage.setItem("user", JSON.stringify(loggedInUser));
@@ -59,7 +64,9 @@ function App() {
         getAllEventData,
         setGetAllEventData,
         getAllSupplierData, 
-        setGetAllSupplierData
+        setGetAllSupplierData,
+        getAllUserEvent, 
+        setAllUserEvent
       ]}
     >
       <BrowserRouter>
@@ -67,7 +74,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/*" element={<PrivateOutlet />}>
-              <Route path="budget" element={<Budget />} />
+              
               <Route path="dashboard" element={<Dashboard />}>
                 <Route path="allUser" element={<UsersTable />} />
                 <Route path="allSupplier" element={<SuppliersTable />} />
@@ -75,9 +82,11 @@ function App() {
                 <Route path="addEvent" element={<AddEvent />} />
                 <Route path="addSupplier" element={<AddSupplier />} />
                 <Route path="allEvent" element={<EventsTable />} />
+                <Route path="myEvent" element={<MyEvents />} />
               </Route>
+            
             </Route>
-
+            <Route path="/events" element={<Events/>}/>
             <Route path="/about" element={<About />} />
             <Route path="/suppliers" element={<Suppliers />} />
 

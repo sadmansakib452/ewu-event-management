@@ -18,6 +18,7 @@ import "./Header.css";
 
 import {handleSignOut} from "../../Authentication/Firebase/GoogleAtuh/GoogleAuth";
 import {loadEvents, loadUsers, loadSuppliers} from '../../Dashboard/UploadImage'
+import {LoadUserEvent} from '../../Events/EventFunctionalities'
 
 const Header = () => {
   const [loggedInUser,
@@ -27,7 +28,9 @@ const Header = () => {
     getAllEventData,
     setGetAllEventData,
     getAllSupplierData, 
-    setGetAllSupplierData] = useContext(UserContext);
+    setGetAllSupplierData,
+    getAllUserEvent, 
+    setAllUserEvent] = useContext(UserContext);
 
   console.log(loggedInUser);
 
@@ -37,7 +40,7 @@ const Header = () => {
     useEffect(()=>{
 
       loadEvents().then((events)=>{
-        console.log(events);
+        console.log('All events, from header',events);
         setGetAllEventData(events)
       })
       loadUsers().then((users)=>{
@@ -48,6 +51,11 @@ const Header = () => {
         console.log('from dashboard supplier', suppliers)
         setGetAllSupplierData(suppliers)
         console.log('users from dashboard',suppliers);
+      });
+      LoadUserEvent(loggedInUser._id).then((userEvents)=>{
+      
+        setAllUserEvent(userEvents)
+        console.log('from dashboard all user Event', getAllUserEvent)
       });
      
     },[])
@@ -91,8 +99,8 @@ const Header = () => {
                 Home
               </Nav.Link>
 
-              <Nav.Link as={Link} to="/venue" className="me-3 fs-5 fw-semibold">
-                Venue
+              <Nav.Link as={Link} to="/events" className="me-3 fs-5 fw-semibold">
+                Events
               </Nav.Link>
               <Nav.Link
                 as={Link}
@@ -104,29 +112,13 @@ const Header = () => {
               <Nav.Link as={Link} to="/about" className="me-3 fs-5 fw-semibold">
                 About
               </Nav.Link>
-              <Nav.Link as={Link} to="/Media" className="me-3 fs-5 fw-semibold">
-                Media
-              </Nav.Link>
-              <Nav.Link
-                as={Link}
-                to="/budget"
-                className="me-3 fs-5 fw-semibold"
-              >
-                Budget
-              </Nav.Link>
+              
+              
 
-              <Nav.Link
-                as={Link}
-                to="/contactUs"
-                className="me-3 fs-5 fw-semibold"
-              >
-                Contact Us
-              </Nav.Link>
+              
              
 
-              <Nav.Link as={Link} to="/test" className="me-3 fs-5 fw-semibold">
-                Test
-              </Nav.Link>
+              
             </Nav>
 
             <div className="d-flex flex-column">
@@ -137,7 +129,7 @@ const Header = () => {
                     id="basic-nav-dropdown"
                     className="mb-5 me-2 fw-semibold fs-5"
                   >
-                    <NavDropdown.Item href="#action/3.1">
+                    <NavDropdown.Item as={Link} to="/dashboard/profile">
                       Profile
                     </NavDropdown.Item>
                     <NavDropdown.Item as={Link}
@@ -192,6 +184,8 @@ const Header = () => {
                   </Button>
                 </Form>
               </div>
+
+              
             </div>
           </Navbar.Collapse>
         </Container>
